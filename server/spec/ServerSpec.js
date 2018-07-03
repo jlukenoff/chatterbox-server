@@ -59,7 +59,8 @@ describe('Node Server Request Listener Function', function() {
   it('Should accept posts to /classes/messages', function() {
     var stubMsg = {
       username: 'Jono',
-      text: 'Do my bidding!'
+      text: 'Do my bidding!',
+      roomname: 'lobby'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
     var res = new stubs.response();
@@ -78,7 +79,8 @@ describe('Node Server Request Listener Function', function() {
   it('Should respond with messages that were previously posted', function() {
     var stubMsg = {
       username: 'Jono',
-      text: 'Do my bidding!'
+      text: 'Do my bidding!',
+      roomname: 'lobby'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
     var res = new stubs.response();
@@ -114,6 +116,35 @@ describe('Node Server Request Listener Function', function() {
       function() {
         expect(res._responseCode).to.equal(404);
       });
+  });
+
+
+  it('Should 404 when asked to post to a nonexistent file', function() {
+    var req = new stubs.request('/arglebargle', 'POST');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    // Wait for response to return and then check status code
+    waitForThen(
+      function() { return res._ended; },
+      function() {
+        expect(res._responseCode).to.equal(404);
+      });
+  });
+
+
+  it('Should 404 when receiving POST data without necessary properties', function() {
+    var msg = {
+      username: 'test',
+      text: 'i have no room property'
+    };
+    var req = new stubs.request('/classes/messages', 'POST', msg);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(404);
   });
 
 });

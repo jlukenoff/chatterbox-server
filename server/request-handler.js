@@ -25,25 +25,25 @@ var messages = [
     username: 'Mel Brooks',
     text: 'It\'s good to be the king',
     roomname: 'lobby',
-    objectId: 0
+    objectId: 3
   },
   {
     username: 'John',
     text: 'It\'s good to be the king',
     roomname: 'classroom2',
-    objectId: 1
+    objectId: 2
   },
   {
     username: 'Deepali',
     text: 'It\'s good to be the king',
     roomname: 'lobby',
-    objectId: 2
+    objectId: 1
   },
   {
     username: 'Sam',
     text: 'It\'s good to be the king',
     roomname: 'classroom1',
-    objectId: 3
+    objectId: 0
   }
 ];
 
@@ -71,11 +71,13 @@ var requestHandler = function(request, response) {
     request.on('data', function(message) {
       data += message;
       let newMessage = JSON.parse(data);
+      if (Object.keys(newMessage).length < 3) {
+        statusCode = 404;
+      }
       newMessage.objectId = id;
       messages.splice(0, 0, newMessage);
     });
     request.on('end', function () {
-      // debugger;
       response.writeHead(statusCode, headers);
       response.end(JSON.stringify({results: messages}));
     });
@@ -84,22 +86,7 @@ var requestHandler = function(request, response) {
     response.writeHead(statusCode, headers);
     response.end(JSON.stringify({results: messages}));
   }
-
-  
-
-  
 };
-
-// These headers will allow Cross-Origin Resource Sharing (CORS).
-// This code allows this server to talk to websites that
-// are on different domains, for instance, your chat client.
-//
-// Your chat client is running from a url like file://your/chat/client/index.html,
-// which is considered a different domain.
-//
-// Another way to get around this restriction is to serve you chat
-// client from this domain by setting up static file serving.
-
 
 exports.requestHandler = requestHandler;
 

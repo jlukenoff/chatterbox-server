@@ -38,7 +38,9 @@ describe('server', function() {
       uri: 'http://127.0.0.1:3000/classes/messages',
       json: {
         username: 'Jono',
-        text: 'Do my bidding!'}
+        text: 'Do my bidding!',
+        roomname: 'lobby'
+      }
     };
 
     request(requestParams, function(error, response, body) {
@@ -52,7 +54,9 @@ describe('server', function() {
       uri: 'http://127.0.0.1:3000/classes/messages',
       json: {
         username: 'Jono',
-        text: 'Do my bidding!'}
+        text: 'Do my bidding!',
+        roomname: 'lobby'
+      }
     };
 
     request(requestParams, function(error, response, body) {
