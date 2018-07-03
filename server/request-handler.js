@@ -48,11 +48,25 @@ var requestHandler = function(request, response) {
 
   headers['Content-Type'] = 'application/json';
   var statusCode = 200;
-  //check if endpoint is valid
+
   if (!request.url.startsWith('/classes/messages')) {
-  
     statusCode = 404;
+  } else if (request.method === 'POST') {
+    statusCode = 201;
+    let data = '';
+    request.on('data', function(message) {
+      data += message;
+      messages.splice(0, 0, JSON.parse(data));
+    });
+    /*request.on('end', function () {
+      // debugger;
+      // response.writeHead(statusCode, headers);
+      // response.end(JSON.stringify({results: messages}));
+    });*/
+    // messages.push(request.data);
   }
+
+  
 
   response.writeHead(statusCode, headers);
 
