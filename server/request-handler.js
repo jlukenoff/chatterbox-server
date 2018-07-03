@@ -18,28 +18,39 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+
+
 var messages = [
   {
     username: 'Mel Brooks',
     text: 'It\'s good to be the king',
-    roomname: 'lobby'
+    roomname: 'lobby',
+    objectId: 0
   },
   {
     username: 'John',
     text: 'It\'s good to be the king',
-    roomname: 'classroom2'
+    roomname: 'classroom2',
+    objectId: 1
   },
   {
     username: 'Deepali',
     text: 'It\'s good to be the king',
-    roomname: 'lobby'
+    roomname: 'lobby',
+    objectId: 2
   },
   {
     username: 'Sam',
     text: 'It\'s good to be the king',
-    roomname: 'classroom1'
+    roomname: 'classroom1',
+    objectId: 3
   }
 ];
+
+var id = 3;
+
+
+
 
 var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
@@ -51,26 +62,32 @@ var requestHandler = function(request, response) {
 
   if (!request.url.startsWith('/classes/messages')) {
     statusCode = 404;
+    response.writeHead(statusCode, headers);
+    response.end(JSON.stringify({results: messages}));
   } else if (request.method === 'POST') {
     statusCode = 201;
     let data = '';
+    id++;
     request.on('data', function(message) {
       data += message;
-      messages.splice(0, 0, JSON.parse(data));
+      let newMessage = JSON.parse(data);
+      newMessage.objectId = id;
+      messages.splice(0, 0, newMessage);
     });
-    /*request.on('end', function () {
+    request.on('end', function () {
       // debugger;
-      // response.writeHead(statusCode, headers);
-      // response.end(JSON.stringify({results: messages}));
-    });*/
+      response.writeHead(statusCode, headers);
+      response.end(JSON.stringify({results: messages}));
+    });
     // messages.push(request.data);
+  } else {
+    response.writeHead(statusCode, headers);
+    response.end(JSON.stringify({results: messages}));
   }
 
   
 
-  response.writeHead(statusCode, headers);
-
-  response.end(JSON.stringify({results: messages}));
+  
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
